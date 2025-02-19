@@ -1,0 +1,61 @@
+﻿  dllmain.cpp
+D:\VisualStudio_Project\Hitman5_Internal\dllmain.cpp(19,27): warning C4311: 'type cast': pointer truncation from 'void *' to 'DWORD'
+  (compiling source file '/dllmain.cpp')
+  
+D:\VisualStudio_Project\Hitman5_Internal\dllmain.cpp(19,27): warning C4302: 'type cast': truncation from 'void *' to 'DWORD'
+  (compiling source file '/dllmain.cpp')
+  
+D:\VisualStudio_Project\Hitman5_Internal\dllmain.cpp(19,44): warning C4311: 'type cast': pointer truncation from 'void *' to 'DWORD'
+  (compiling source file '/dllmain.cpp')
+  
+D:\VisualStudio_Project\Hitman5_Internal\dllmain.cpp(19,44): warning C4302: 'type cast': truncation from 'void *' to 'DWORD'
+  (compiling source file '/dllmain.cpp')
+  
+D:\VisualStudio_Project\Hitman5_Internal\dllmain.cpp(22,15): warning C4311: 'type cast': pointer truncation from 'void *' to 'DWORD'
+  (compiling source file '/dllmain.cpp')
+  
+D:\VisualStudio_Project\Hitman5_Internal\dllmain.cpp(22,15): warning C4302: 'type cast': truncation from 'void *' to 'DWORD'
+  (compiling source file '/dllmain.cpp')
+  
+D:\VisualStudio_Project\Hitman5_Internal\dllmain.cpp(22,6): warning C4312: 'type cast': conversion from 'DWORD' to 'DWORD *' of greater size
+  (compiling source file '/dllmain.cpp')
+  
+D:\VisualStudio_Project\Hitman5_Internal\dllmain.cpp(30,17): error C2485: '__declspec(identifier)' is not a recognized extended attribute
+  (compiling source file '/dllmain.cpp')
+  
+D:\VisualStudio_Project\Hitman5_Internal\dllmain.cpp(32,5): error C4235: nonstandard extension used: '__asm' keyword not supported on this architecture
+  (compiling source file '/dllmain.cpp')
+  
+D:\VisualStudio_Project\Hitman5_Internal\dllmain.cpp(34,3): error C2065: 'push': undeclared identifier
+  (compiling source file '/dllmain.cpp')
+  
+D:\VisualStudio_Project\Hitman5_Internal\dllmain.cpp(34,8): error C2146: syntax error: missing ';' before identifier 'ecx'
+  (compiling source file '/dllmain.cpp')
+  
+D:\VisualStudio_Project\Hitman5_Internal\dllmain.cpp(34,8): error C2065: 'ecx': undeclared identifier
+  (compiling source file '/dllmain.cpp')
+  
+D:\VisualStudio_Project\Hitman5_Internal\dllmain.cpp(35,3): error C2146: syntax error: missing ';' before identifier 'mov'
+  (compiling source file '/dllmain.cpp')
+  
+D:\VisualStudio_Project\Hitman5_Internal\dllmain.cpp(35,3): error C2065: 'mov': undeclared identifier
+  (compiling source file '/dllmain.cpp')
+  
+D:\VisualStudio_Project\Hitman5_Internal\dllmain.cpp(35,7): error C2146: syntax error: missing ';' before identifier 'ecx'
+  (compiling source file '/dllmain.cpp')
+  
+D:\VisualStudio_Project\Hitman5_Internal\dllmain.cpp(35,7): error C2065: 'ecx': undeclared identifier
+  (compiling source file '/dllmain.cpp')
+  
+D:\VisualStudio_Project\Hitman5_Internal\dllmain.cpp(35,17): error C2760: syntax error: '+' was unexpected here; expected ','
+  (compiling source file '/dllmain.cpp')
+  
+D:\VisualStudio_Project\Hitman5_Internal\dllmain.cpp(35,24): error C2059: syntax error: ']'
+  (compiling source file '/dllmain.cpp')
+  
+D:\VisualStudio_Project\Hitman5_Internal\dllmain.cpp(63,20): warning C4311: 'type cast': pointer truncation from 'void *' to 'DWORD'
+  (compiling source file '/dllmain.cpp')
+  
+D:\VisualStudio_Project\Hitman5_Internal\dllmain.cpp(63,20): warning C4302: 'type cast': truncation from 'void *' to 'DWORD'
+  (compiling source file '/dllmain.cpp')
+  

@@ -1,0 +1,8 @@
+﻿  pch.cpp
+  dllmain.cpp
+  mem.cpp
+D:\VisualStudio_Project\Hitman5_Internal\mem.cpp(8,20): warning C4018: '<': signed/unsigned mismatch
+  (compiling source file '/mem.cpp')
+  
+  Generating Code...
+  Hitman5_Internal.vcxproj -> D:\VisualStudio_Project\Hitman5_Internal\Debug\Hitman5_Internal.dll
