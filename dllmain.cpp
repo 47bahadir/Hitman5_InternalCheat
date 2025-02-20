@@ -114,7 +114,13 @@ BOOL APIENTRY DllMain( HMODULE hModule,
     switch (ul_reason_for_call)
     {
     case DLL_PROCESS_ATTACH:
-        CloseHandle(CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)hackThread, hModule, 0, NULL));
+	{
+		HANDLE hThread = CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)hackThread, hModule, 0, NULL);
+		if (hThread)
+		{
+			CloseHandle(hThread);
+		}
+	}
     case DLL_THREAD_ATTACH:
     case DLL_THREAD_DETACH:
     case DLL_PROCESS_DETACH:
