@@ -4,7 +4,7 @@
 
 
 DWORD ammoBackAddy;
-void __declspec(naked) ammoFunc()
+void __declspec(naked) ammoFunc()		//Change Ammo to 9999 And Lock
 {
     __asm
     {
@@ -27,7 +27,7 @@ void __declspec(naked) ammoFunc()
 
 
 DWORD healthBackAddy;
-void __declspec(naked) healthFunc()
+void __declspec(naked) healthFunc()		//Change Health to 100 And Lock
 {
 	__asm
 	{
@@ -43,21 +43,23 @@ void __declspec(naked) healthFunc()
 DWORD WINAPI hackThread(HMODULE hModule)
 {
     //get module base address,GetModuleHandle with null return address value
-    uintptr_t baseAddress = (uintptr_t)GetModuleHandle(NULL);
+    uintptr_t modBaseAddy = (uintptr_t)GetModuleHandle(NULL);
 
-    if (baseAddress)
+    if (modBaseAddy)
     {
 		//ammo change address : HMA.exe+2F5C80 -> 66 89 86 16 03 00 00 == mov [esi+00000316],ax
         int ammoLen = 7;
-        void* ammoDst = (void*)(baseAddress + 0x2F5C80);
+        void* ammoDst = (void*)(modBaseAddy + 0x2F5C80);
         ammoBackAddy = (DWORD)ammoDst + ammoLen;
         bool bAmmo = true;
 
 		//health change address : HMA.exe+4082E4 -> D9 9E 18 02 00 00 == fstp dword ptr [esi+00000218]
 		int healthLen = 6;
-		void* healthDst = (void*)(baseAddress + 0x4082E4);
+		void* healthDst = (void*)(modBaseAddy + 0x4082E4);
 		healthBackAddy = (DWORD)healthDst + healthLen;
 		bool bHealth = true;
+
+		bool bSpread = true, bRecoil = true, bNoStopShoot = true;
 
         while (true)
         {
@@ -86,6 +88,60 @@ DWORD WINAPI hackThread(HMODULE hModule)
 				else
 				{
 					mem::writePatch((BYTE*)healthDst, (BYTE*)"\xD9\x9E\x18\x02\x00\x00", healthLen);
+				}
+			}
+
+			
+			if (GetAsyncKeyState(VK_NUMPAD3) & 1)
+			{
+				bRecoil = !bRecoil;
+				if (!bRecoil)
+				{
+					//HMA.exe+55ECFD - 90 90                 - nop nop
+					mem::nopPatch((BYTE*)(modBaseAddy + 0x55ECFD), 2);
+
+					//HMA.exe+55ED0B - 90 90                 - nop nop
+					mem::nopPatch((BYTE*)(modBaseAddy + 0x55ED0B), 2);
+				}
+				else
+				{
+					//HMA.exe+55ECFD - 7A 20                 - jp HMA.exe+55ED1F
+					mem::writePatch((BYTE*)(modBaseAddy + 0x55ECFD), (BYTE*)"\x7A\x20", 2);
+
+					//HMA.exe+55ED0B - 7A 12                 - jp HMA.exe+55ED1F
+					mem::writePatch((BYTE*)(modBaseAddy + 0x55ED0B), (BYTE*)"\x7A\x12", 2);
+				}
+			}
+
+
+			if (GetAsyncKeyState(VK_NUMPAD4) & 1)
+			{
+				bSpread = !bSpread;
+				if (!bSpread)
+				{
+					//HMA.exe+5ECA10 - 90 90 90 90 90 90        - nop * 6
+					mem::nopPatch((BYTE*)(modBaseAddy + 0x5ECA10), 6);
+				}
+				else
+				{
+					//HMA.exe+5ECA10 - D9 9F 20 04 00 00        - fstp dword ptr [edi+00000420]
+					mem::writePatch((BYTE*)(modBaseAddy + 0x5ECA10), (BYTE*)"\xD9\x9F\x20\x04\x00\x00", 6);
+				}
+			}
+
+
+			if (GetAsyncKeyState(VK_NUMPAD5) & 1)
+			{
+				bNoStopShoot = !bNoStopShoot;
+				if (!bNoStopShoot)
+				{
+					//HMA.exe+5ECE7B - 90 90 90 90 90 90 90     - nop * 7
+					mem::nopPatch((BYTE*)(modBaseAddy + 0x5ECE7B), 7);
+				}
+				else
+				{
+					//HMA.exe+5ECE7B - 66 FF 87 04 04 00 00     - inc word ptr [edi+00000404]
+					mem::writePatch((BYTE*)(modBaseAddy + 0x5ECE7B), (BYTE*)"\x66\xFF\x87\x04\x04\x00\x00", 7);
 				}
 			}
 
