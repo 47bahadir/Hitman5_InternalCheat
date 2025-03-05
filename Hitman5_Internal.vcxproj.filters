@@ -15,6 +15,12 @@
     <Filter Include="mem">
       <UniqueIdentifier>{c1d16cdc-fb17-497b-9ba8-c950e434a802}</UniqueIdentifier>
     </Filter>
+    <Filter Include="speech">
+      <UniqueIdentifier>{3dd0ba4d-423a-4efd-b239-b3f66d97a897}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="hook">
+      <UniqueIdentifier>{35afd063-8d65-401c-b3a9-f9f887cb893f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -26,6 +32,12 @@
     <ClInclude Include="mem.h">
       <Filter>mem</Filter>
     </ClInclude>
+    <ClInclude Include="speech.h">
+      <Filter>speech</Filter>
+    </ClInclude>
+    <ClInclude Include="hook.h">
+      <Filter>hook</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
@@ -36,6 +48,12 @@
     </ClCompile>
     <ClCompile Include="mem.cpp">
       <Filter>mem</Filter>
+    </ClCompile>
+    <ClCompile Include="speech.cpp">
+      <Filter>speech</Filter>
+    </ClCompile>
+    <ClCompile Include="hook.cpp">
+      <Filter>hook</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

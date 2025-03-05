@@ -1,43 +1,8 @@
 // dllmain.cpp : Defines the entry point for the DLL application.
 #include "pch.h"
+#include "speech.h"
 #include <intrin.h>
-
-
-DWORD ammoBackAddy;
-void __declspec(naked) ammoFunc()		//Change Ammo to 9999 And Lock
-{
-    __asm
-    {
-		push ecx
-		mov ecx, [esi + 0x5E6]
-		cmp ecx, 2
-		je code
-		mov ax, 0x3E7
-		mov[esi + 0x00000316], ax
-		pop ecx
-		jmp ammoBackAddy
-
-		code:
-		mov[esi + 0x00000316], ax
-		pop ecx
-		jmp ammoBackAddy
-
-    }
-}
-
-
-DWORD healthBackAddy;
-void __declspec(naked) healthFunc()		//Change Health to 100 And Lock
-{
-	__asm
-	{
-		push 100
-		fild dword ptr[esp]
-		fstp dword ptr[esi + 0x00000218]
-		add esp, 4
-		jmp healthBackAddy
-	}
-}
+#include "hook.h"
 
 
 DWORD WINAPI hackThread(HMODULE hModule)
@@ -59,39 +24,66 @@ DWORD WINAPI hackThread(HMODULE hModule)
 		healthBackAddy = (DWORD)healthDst + healthLen;
 		bool bHealth = true;
 
+		//HMA.exe + 5FAD63 - D9 45 08          == fld dword ptr [ebp+08]
+		//HMA.exe + 5FAD66 - D8 81 A8 00 00 00 == fadd dword ptr[ecx + 000000A8]
+		int damageLen = 9;
+		void* damageDst = (void*)(modBaseAddy + 0x5FAD63);
+		damageBackAddy = (DWORD)damageDst + damageLen;
+		bool bDamage = true;
+
 		bool bSpread = true, bRecoil = true, bNoStopShoot = true;
 
+		SpeechManager::Speak(L"Hack on");
         while (true)
         {
+			//Damage Multiplier -> Ctrl + Number
+			if (GetAsyncKeyState(VK_CONTROL) & 0x8000)
+			{
+				for (int i = 0; i <= 9; i++)
+				{
+					if (GetAsyncKeyState('0' + i) & 1)		//'0' ASCII is 48
+					{
+						damageMultiplier = static_cast<float>(i);
+						
+						SpeechManager::Speak(L"Damage " + std::to_wstring(i));
+						break;
+					}
+				}
+			}
 
+			//Unlimited bullets
 			if (GetAsyncKeyState(VK_NUMPAD1) & 1)
 			{
 				bAmmo = !bAmmo;
 				if (!bAmmo)
 				{
-					mem::myHook(ammoDst, ammoFunc, ammoLen);
+					mem::myHook(ammoDst, hook::ammoFunc, ammoLen);
+					SpeechManager::Speak(L"Unlimited bullets on");
 				}
 				else
 				{
 					mem::writePatch((BYTE*)ammoDst, (BYTE*)"\x66\x89\x86\x16\x03\x00\x00", ammoLen);
+					SpeechManager::Speak(L"Unlimited bullets off");
 				}
 			}
 
-
+			//Unlimited health
 			if (GetAsyncKeyState(VK_NUMPAD2) & 1)
 			{
 				bHealth = !bHealth;
 				if (!bHealth)
 				{
-					mem::myHook(healthDst, healthFunc, healthLen);
+					mem::myHook(healthDst, hook::healthFunc, healthLen);
+					SpeechManager::Speak(L"Unlimited health on");
 				}
 				else
 				{
 					mem::writePatch((BYTE*)healthDst, (BYTE*)"\xD9\x9E\x18\x02\x00\x00", healthLen);
+					SpeechManager::Speak(L"Unlimited health off");
 				}
 			}
 
-			
+			//No recoil
 			if (GetAsyncKeyState(VK_NUMPAD3) & 1)
 			{
 				bRecoil = !bRecoil;
@@ -102,6 +94,8 @@ DWORD WINAPI hackThread(HMODULE hModule)
 
 					//HMA.exe+55ED0B - 90 90                 - nop nop
 					mem::nopPatch((BYTE*)(modBaseAddy + 0x55ED0B), 2);
+
+					SpeechManager::Speak(L"No recoil on");
 				}
 				else
 				{
@@ -110,10 +104,12 @@ DWORD WINAPI hackThread(HMODULE hModule)
 
 					//HMA.exe+55ED0B - 7A 12                 - jp HMA.exe+55ED1F
 					mem::writePatch((BYTE*)(modBaseAddy + 0x55ED0B), (BYTE*)"\x7A\x12", 2);
+
+					SpeechManager::Speak(L"No recoil off");
 				}
 			}
 
-
+			//No spread
 			if (GetAsyncKeyState(VK_NUMPAD4) & 1)
 			{
 				bSpread = !bSpread;
@@ -121,15 +117,19 @@ DWORD WINAPI hackThread(HMODULE hModule)
 				{
 					//HMA.exe+5ECA10 - 90 90 90 90 90 90        - nop * 6
 					mem::nopPatch((BYTE*)(modBaseAddy + 0x5ECA10), 6);
+
+					SpeechManager::Speak(L"No spread on");
 				}
 				else
 				{
 					//HMA.exe+5ECA10 - D9 9F 20 04 00 00        - fstp dword ptr [edi+00000420]
 					mem::writePatch((BYTE*)(modBaseAddy + 0x5ECA10), (BYTE*)"\xD9\x9F\x20\x04\x00\x00", 6);
+
+					SpeechManager::Speak(L"No spread off");
 				}
 			}
 
-
+			//No pause shooting
 			if (GetAsyncKeyState(VK_NUMPAD5) & 1)
 			{
 				bNoStopShoot = !bNoStopShoot;
@@ -137,19 +137,52 @@ DWORD WINAPI hackThread(HMODULE hModule)
 				{
 					//HMA.exe+5ECE7B - 90 90 90 90 90 90 90     - nop * 7
 					mem::nopPatch((BYTE*)(modBaseAddy + 0x5ECE7B), 7);
+
+					SpeechManager::Speak(L"No pause shooting on");
 				}
 				else
 				{
 					//HMA.exe+5ECE7B - 66 FF 87 04 04 00 00     - inc word ptr [edi+00000404]
 					mem::writePatch((BYTE*)(modBaseAddy + 0x5ECE7B), (BYTE*)"\x66\xFF\x87\x04\x04\x00\x00", 7);
+
+					SpeechManager::Speak(L"No pause shooting off");
+				}
+			}
+
+			//Damage Changes
+			if (GetAsyncKeyState(VK_NUMPAD6) & 1)
+			{
+				bDamage = !bDamage;
+				if (!bDamage)
+				{
+					mem::myHook(damageDst, hook::damageFunc, damageLen);
+
+					SpeechManager::Speak(L"Damage Changes on");
+				}
+				else
+				{
+					mem::writePatch((BYTE*)damageDst, (BYTE*)"\xD9\x45\x08\xD8\x81\xA8\x00\x00\x00", damageLen);
+
+					SpeechManager::Speak(L"Damage Changes off");
 				}
 			}
 
 
 			if (GetAsyncKeyState(VK_END) & 1)
 			{
+				SpeechManager::Speak(L"Hack off");
+				Sleep(1000);
+
                 mem::writePatch((BYTE*)ammoDst, (BYTE*)"\x66\x89\x86\x16\x03\x00\x00", ammoLen);
 				mem::writePatch((BYTE*)healthDst, (BYTE*)"\xD9\x9E\x18\x02\x00\x00", healthLen);
+				mem::writePatch((BYTE*)damageDst, (BYTE*)"\xD9\x45\x08\xD8\x81\xA8\x00\x00\x00", damageLen);
+				//NoStopShoot
+				mem::writePatch((BYTE*)(modBaseAddy + 0x5ECE7B), (BYTE*)"\x66\xFF\x87\x04\x04\x00\x00", 7);
+				//NoSpread
+				mem::writePatch((BYTE*)(modBaseAddy + 0x5ECA10), (BYTE*)"\xD9\x9F\x20\x04\x00\x00", 6);
+				//NoRecoil
+				mem::writePatch((BYTE*)(modBaseAddy + 0x55ECFD), (BYTE*)"\x7A\x20", 2);
+				mem::writePatch((BYTE*)(modBaseAddy + 0x55ED0B), (BYTE*)"\x7A\x12", 2);
                 break;
 
 			}
@@ -157,6 +190,7 @@ DWORD WINAPI hackThread(HMODULE hModule)
         }
     }
 
+	SpeechManager::Cleanup();
     FreeLibraryAndExitThread(hModule, 0);
     return 0;
 }
