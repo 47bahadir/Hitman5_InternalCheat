@@ -31,6 +31,14 @@ DWORD WINAPI hackThread(HMODULE hModule)
 		damageBackAddy = (DWORD)damageDst + damageLen;
 		bool bDamage = true;
 
+
+		//HMA.exe + 3BD249 - 8B 46 14	== mov eax, [esi + 14]
+		//HMA.exe + 3BD24C - 8B 16		== mov edx, [esi]
+		int scoreLen = 5;
+		void* scoreDst = (void*)(modBaseAddy + 0x3BD249);
+		scoreBackAddy = (DWORD)scoreDst + scoreLen;
+		bool bScore = true;
+
 		bool bSpread = true, bRecoil = true, bNoStopShoot = true;
 
 		SpeechManager::Speak(L"Hack on");
@@ -164,6 +172,24 @@ DWORD WINAPI hackThread(HMODULE hModule)
 					mem::writePatch((BYTE*)damageDst, (BYTE*)"\xD9\x45\x08\xD8\x81\xA8\x00\x00\x00", damageLen);
 
 					SpeechManager::Speak(L"Damage Changes off");
+				}
+			}
+
+			//Score Changes
+			if (GetAsyncKeyState(VK_NUMPAD7) & 1)
+			{
+				bScore = !bScore;
+				if (!bScore)
+				{
+					mem::myHook(scoreDst, hook::scoreFunc, scoreLen);
+
+					SpeechManager::Speak(L"Score only rise on");
+				}
+				else
+				{
+					mem::writePatch((BYTE*)scoreDst, (BYTE*)"\x8B\x46\x14\x8B\x16", scoreLen);
+
+					SpeechManager::Speak(L"Score only rise off");
 				}
 			}
 
